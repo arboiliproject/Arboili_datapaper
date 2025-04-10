@@ -12,6 +12,14 @@ require(data.table)
 source("functions/fun.R")
 source("functions/getGraph2.R")
 
+########################################################################
+# IMPORTANT
+# Define here your api_key
+
+your_api_key <- "..."
+
+########################################################################
+
 # Load the list of Brazilian federative units (states)
 FUs <- read.csv("data/br_federative_units.csv")
 
@@ -110,7 +118,8 @@ for(n in 1:nrow(query_table)) {
       topic_keyword = topic_query, 
       geo_location = federative_units[i], 
       start_date = five_years, 
-      end_date = most_recent_year_month
+      end_date = most_recent_year_month,
+      api_key = your_api_key
     )
     
     # Stop the script if API rate limit (429) is reached

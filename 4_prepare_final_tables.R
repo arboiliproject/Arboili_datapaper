@@ -6,10 +6,11 @@ require(data.table)
 FUs <- read.csv("data/br_federative_units.csv", colClasses = "factor")
 
 # Identify latest Google Trends extraction folder
-gt_extraction_dirs <- substr(list.dirs("data/GT/"), 9, 19)
-gt_extraction_dirs <- gt_extraction_dirs[nchar(gt_extraction_dirs) == 10]
-last_gt_extraction_dir <- sort(gt_extraction_dirs)[length(gt_extraction_dirs)]
-dir_path <- paste0("./data/GT/", last_gt_extraction_dir)
+# gt_extraction_dirs <- substr(list.dirs("data/GT/"), 9, 19)
+# gt_extraction_dirs <- gt_extraction_dirs[nchar(gt_extraction_dirs) == 10]
+# last_gt_extraction_dir <- sort(gt_extraction_dirs)[length(gt_extraction_dirs)]
+# dir_path <- paste0("./data/GT/", last_gt_extraction_dir)
+dir_path <- paste0("./data/GT/query_results")
 
 # Read GT time series data
 gt_ts <- fread(paste0(dir_path, "/query_result.csv"))

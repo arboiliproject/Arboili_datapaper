@@ -1,3 +1,36 @@
+#' @title Get Top Search Queries from Google Trends
+#' @description This function retrieves the top search queries related to a given search term
+#' using the Google Trends v1beta API. You can specify geographic, temporal, and topical filters.
+#'
+#' @param terms A single character string indicating the search term or topic ID. Must be a single term.
+#' @param geo Optional. A character string specifying the region to filter the results by, using ISO-3166-2 codes (e.g., "BR", "BR-SP").
+#' Use \code{gtrendsAPI::regions} to see available region codes.
+#' @param property Optional. A character string indicating the type of search to filter by.
+#' Must be one of \code{"web"}, \code{"images"}, \code{"news"}, \code{"froogle"}, or \code{"youtube"}.
+#' Defaults to \code{"web"}.
+#' @param category Optional. A character string representing the category ID as used by Google Trends.
+#' Use \code{gtrendsAPI::categories} to view available categories.
+#' @param startDate Optional. A character string representing the start date in \code{"YYYY-MM"} format.
+#' @param endDate Optional. A character string representing the end date in \code{"YYYY-MM"} format.
+#' @param api.key A valid Google Trends API key (as a character string).
+#'
+#' @return A data frame with the following columns:
+#' \itemize{
+#'   \item \code{topSearches}: The top related search queries.
+#'   \item \code{value}: Relative popularity score for each search term.
+#'   \item \code{geo}: The geographical scope of the query.
+#'   \item \code{time}: Time coverage of the query (start and end).
+#'   \item \code{keyword}: The original search term.
+#'   \item \code{gprop}: Type of search property (web, news, etc.).
+#'   \item \code{category}: The category filter used.
+#' }
+#' If no results are found, a data frame with NA values is returned.
+#'
+#' @details
+#' The function constructs a URL to query the Google Trends v1beta API, including optional filters for
+#' geography, date range, category, and property. It returns the top search queries for the specified term.
+#' It performs basic validation for input parameters and handles HTTP errors and empty responses.
+
 getTopQueries2 <- function(terms, geo=NULL, property=NULL, category=NULL, startDate=NULL, endDate=NULL, api.key) {
   
   #Base link of API call
