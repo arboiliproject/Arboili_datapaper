@@ -146,10 +146,10 @@ fin = Sys.time()
 UFs <- read.csv("data/br_federative_units.csv")
 
 sivep_data_summary2 <- sivep_data_summary %>%
-  left_join(UFs %>% select(COD, SIGLA) %>% mutate(COD = as.character(COD)), by = c("SG_UF_NOT" = "COD")) %>%
+  left_join(UFs %>% select(CODE, ABBREVIATION ) %>% mutate(CODE = as.character(CODE)), by = c("SG_UF_NOT" = "CODE")) %>%
   mutate(is_number = as.numeric(SG_UF_NOT)) %>%
-  mutate(SG_UF_NOT = ifelse(is.na(is_number), SG_UF_NOT, SIGLA)) %>%
-  select(-is_number, - SIGLA)
+  mutate(SG_UF_NOT = ifelse(is.na(is_number), SG_UF_NOT, ABBREVIATION )) %>%
+  select(-is_number, - ABBREVIATION )
 
 colnames(sivep_data_summary2) <- c("ew_recorded", "ew_notification", "ew_symptom_onset", "final_classification_original", "state_abbrev", 
   "final_classification_new", "case_count", "fever", "cough", "sore_throat", "breath_shortness", "resp_distress", 
