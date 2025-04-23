@@ -160,8 +160,27 @@ fin = Sys.time()
 print(fin - ini)
 
 # Save topic results to CSV
-filename <- paste0(dir_path, "/query_result_topic.csv")
-fwrite(gt_results_topic, filename)
+
+# Load symptom codes
+popular_terms <- read.csv("data/popular_terms.csv")
+
+symptom_codes = popular_terms %>%
+  filter(!exclude) %>%
+  mutate(is_code = grepl("/", terms)) %>%
+  filter(is_code) %>% select(terms, is_code) |>
+  distinct()
+
+gt_s <- gt_results_topic |>
+  select(topicTitle, topicId, time, geo, value, keyword) |>
+  left_join(symptom_codes, by = c("topicId" = "terms")) %>%
+  mutate(is_code = ifelse(is.na(is_code), F, T),
+         is_code = ifelse(topicTitle == 'Symptom', TRUE, is_code),
+         geo = ifelse(nchar(geo) == 5, substr(geo, 4,5), geo))
+
+colnames(gt_s) <- c("topic_title", "topic_id", "date", "location", "value", "disease", "key_symptom")
+
+filename <- paste0(dir_path, "/GoogleTrends_related_topic.csv")
+fwrite(gt_s, filename)
 
 # Save topic errors (if any)
 if(nrow(error_df_topic) > 0) {
@@ -170,8 +189,15 @@ if(nrow(error_df_topic) > 0) {
 }
 
 # Save query results to CSV
-filename <- paste0(dir_path, "/query_result_query.csv")
-fwrite(gt_results_query, filename)
+gt_q <- gt_results_query |>
+  select(topSearches, time, geo, value, keyword) |>
+  mutate(geo = ifelse(nchar(geo) == 5, substr(geo, 4,5), geo))
+
+colnames(gt_q) <- c("topic_title", "date", "location", "value", "disease")
+
+# Save query results to CSV
+filename <- paste0(dir_path, "/GoogleTrends_related_query.csv")
+fwrite(gt_q, filename)
 
 # Save query errors (if any)
 if(nrow(error_df_query) > 0) {
