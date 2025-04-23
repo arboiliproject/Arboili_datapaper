@@ -28,10 +28,12 @@ federative_units <- c(paste0("BR-", sort(FUs$ABBREV)), "BR")
 
 ########################
 # Create directory to store output files for the current date
-mainDir <- "./data/GT/"
-day_date <- format(Sys.time(), format = "%Y_%m_%d")  # Get current date in YYYY_MM_DD format
-dir_path = paste0(mainDir, day_date)  # Combine base path with date
-dir.create(file.path(dir_path), showWarnings = FALSE)  # Create directory if it doesn't exist
+# Use this to update GoogleTrends extraction folder for most recent date
+# mainDir <- "./data/GoogleTrends/"
+# day_date <- format(Sys.time(), format = "%Y_%m_%d")  # Get current date in YYYY_MM_DD format
+# dir_path = paste0(mainDir, day_date)  # Combine base path with date
+# dir.create(file.path(dir_path), showWarnings = FALSE)  # Create directory if it doesn't exist
+dir_path = "./data/GoogleTrends/"
 
 # Load and prepare search term queries
 
@@ -159,12 +161,26 @@ for(n in 1:nrow(query_table)) {
 fin = Sys.time()  # Record end time
 print(fin - ini)  # Print total processing time
 
+# Clean and prepare GoogleTrends data
+gt_ts_final <- gt_results %>%
+  select(-all_of(c("sys_time", "time"))) %>%
+  mutate(
+    geo = substr(geo, 4, 5),
+    geo = as.character(geo),
+    geo = ifelse(geo == "", "BR", geo),
+    location = factor(geo),
+    date = as.Date(date),
+    topic = factor(keyword)
+  ) %>%
+  select(date, location, topic, value) %>%
+  complete(date, location, topic, fill = list(value = 0))
+
 # Save successful results to CSV file
-filename <- paste0(dir_path, "/query_result.csv")
-fwrite(gt_results, filename)
+filename <- paste0(dir_path, "GoogleTrends_search.csv")
+fwrite(gt_ts_final, filename)
 
 # If any errors occurred, save the error log as well
 if(nrow(error_df) > 0) {
-  filename_error <- paste0(dir_path, "/query_error.csv")  
+  filename_error <- paste0(dir_path, "query_error.csv")  
   fwrite(error_df, filename_error)
 }
